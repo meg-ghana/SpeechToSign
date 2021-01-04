@@ -86,6 +86,8 @@ public class RecordVideos extends Fragment {
         System.out.println(umessage);
         scroll = v.findViewById(R.id.sv);
         linlay = v.findViewById(R.id.linlay);
+        ScrollView.LayoutParams lay2 = new ScrollView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+        linlay.setLayoutParams(lay2);
        // tv = v.findViewById(R.id.textv);
        // name = v.findViewById(R.id.names);
         return v;
@@ -94,36 +96,49 @@ public class RecordVideos extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
         for (int i = 0; i<al.size();i++) {
-            ScrollView.LayoutParams lay2 = new ScrollView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-            linlay.setLayoutParams(lay2);
-
             LinearLayout.LayoutParams lay = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-            lay.setMargins(300,40,300,0);
+            lay.setMargins(100,40,100,0);
 
-            TextView tv = new TextView(getActivity());
-            tv.setTextColor(Color.BLACK);
-            tv.setTextSize(30f);
-            tv.setText(al.get(i).replace("-"," "));
+            TextView tv2 = new TextView(getActivity());
+            tv2.setTextColor(Color.BLACK);
+            tv2.setTextSize(30f);
+            tv2.setText(al.get(i).replace("-"," "));
             if(al.get(i).equals("me")){
-                tv.setText("me/I");
+                tv2.setText("me/I");
             }
-            tv.setGravity(Gravity.CENTER_HORIZONTAL);
+            tv2.setGravity(Gravity.CENTER_HORIZONTAL);
 
             CardView cv = new CardView(getActivity());
             cv.setRadius(10);
             cv.setLayoutParams(lay);
-            cv.addView(tv);
-            linlay.addView(cv);
+            //cv.addView(tv);
+            //linlay.addView(cv);
 
             VideoView vidv = new VideoView(getActivity());
+            //vidv.setLayoutParams(lay);
             CardView cv2 = new CardView(getActivity());
+            LinearLayout newLL = new LinearLayout(getActivity());
+            newLL.setOrientation(LinearLayout.VERTICAL);
+            CardView.LayoutParams cardlay = new CardView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            newLL.setLayoutParams(cardlay);
+            lay.setMargins(100,40,100,0);
             cv2.setRadius(10);
             cv2.setLayoutParams(lay);
+           // tv.setLayoutParams(lay);
+            //newLL.addView(tv);
+            //newLL.addView(vidv);
+            //cv2.addView(newLL);
+            TextView tv = new TextView(getActivity());
+            tv.setText("");
             cv2.addView(vidv);
+            cv2.addView(tv);
+            linlay.addView(tv2);
             linlay.addView(cv2);
             if(al.get(i).equals("cat")){
                 System.out.println("hello");
+                //linlay.addView(cv);
             }
             MediaController mc = new MediaController(getActivity());
             mc.setAnchorView(vidv);
