@@ -9,7 +9,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="signalyze"
+        android:text="speech-to-sign"
 
         android:textSize="30dp"
         android:id="@+id/title"
@@ -23,22 +23,12 @@
         android:id="@+id/recordtv"
         android:layout_marginTop="10dp"
         android:textSize="20dp"
-        android:text="speech to sign >"
+        android:text="start translation >"
 
         android:onClick="record"
         app:layout_constraintTop_toBottomOf="@id/title"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"/>
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/typetv"
-        android:layout_marginTop="10dp"
-        android:textSize="20dp"
-        android:text="text to sign >"
-        android:onClick="type"
-        app:layout_constraintTop_toBottomOf="@id/recordtv"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"/>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

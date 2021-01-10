@@ -94,13 +94,14 @@ public class Recording extends Fragment {
 
             @Override
             public void onError(int error) {
-                Toast.makeText(getActivity(), "error error eroor", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getActivity(), "error error eroor", Toast.LENGTH_SHORT).show();
             }
 
             @Override
             public void onResults(Bundle results) {
                 String strtext = results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION).get(0);
                 texttv.setText(strtext);
+                iv.setColorFilter(Color.BLACK);
                 ((RecordingActivity)getActivity()).message = strtext;
             }
 
