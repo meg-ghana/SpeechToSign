@@ -47,19 +47,16 @@ public class RecordVideos extends Fragment {
     public RecordVideos() {
         // Required empty public constructor
     }
-
     public static RecordVideos newInstance() {
         RecordVideos fragment = new RecordVideos();
         return fragment;
     }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
         }
     }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -108,7 +105,7 @@ public class RecordVideos extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
+        String[] elems = new String[al.size()];
         for (int i = 0; i < al.size(); i++) {
             LinearLayout.LayoutParams lay = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
             lay.setMargins(100, 40, 100, 0);
@@ -156,9 +153,11 @@ public class RecordVideos extends Fragment {
                 RequestFuture<JSONObject> ft = RequestFuture.newFuture();
                 String url = "https://media.signbsl.com/videos/asl/startasl/mp4/" + al.get(i) + ".mp4";
                 System.out.println(al.get(i)+"fjhkrjf");
+                int place = i;
                 StringRequest response1 = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
+                        elems[place]=url;
                         System.out.println("hey1!!");
                         linlay.addView(tv2);
                         cv2.addView(vidv);
@@ -180,6 +179,7 @@ public class RecordVideos extends Fragment {
                     }
                 });
                 rq.add(response1);
+
                     /*StringRequest sr = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
                         @Override
                         public void onResponse(String response) {
@@ -213,5 +213,7 @@ public class RecordVideos extends Fragment {
         }
 
     }
+        for(String element:elems)
+            System.out.println("arr"+element);
 }
 }
