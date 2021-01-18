@@ -35,9 +35,14 @@ import org.json.JSONObject;
 
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
 
 public class RecordVideos extends Fragment {
     String umessage = "";
+    static int index =0;
+    static int[] doeswork;
+
+    //static boolean failure;
     //    TextView tv;
 //    TextView name;
     LinearLayout linlay;
@@ -63,11 +68,12 @@ public class RecordVideos extends Fragment {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_record_videos, container, false);
         umessage = ((RecordingActivity) getActivity()).message;
-
+        //failure = true;
         umessage = umessage.trim().replace("'", "");
         String[] arr = umessage.split(" ");
         String new_ms = "";
         al = new ArrayList<String>();
+
         if (umessage.contains(" ")) {
             String s = "and the is am are or to a an";
             for (int i = 0; i < arr.length; i++) {
@@ -78,7 +84,7 @@ public class RecordVideos extends Fragment {
                     } else if (arr[i].equalsIgnoreCase("I")) {
                         al.add("me");
                     } else if (s.contains(arr[i])) {
-                        Toast.makeText(getActivity(), "doesnt work: " + arr[i], Toast.LENGTH_LONG).show();
+                        //Toast.makeText(getActivity(), "doesnt work: " + arr[i], Toast.LENGTH_LONG).show();
                     } else {
                         al.add(arr[i]);
                     }
@@ -91,7 +97,9 @@ public class RecordVideos extends Fragment {
         for (String s : al) {
             System.out.println("heyyeyey" + s);
         }
-
+        doeswork = new int[al.size()];
+        for(int a = 0; a<doeswork.length;a+=1)
+            doeswork[a]=-1;
         System.out.println(umessage);
         scroll = v.findViewById(R.id.sv);
         linlay = v.findViewById(R.id.linlay);
@@ -105,11 +113,82 @@ public class RecordVideos extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        String[] elems = new String[al.size()];
+        for (int k = 0; k< al.size(); k+=1){
+            RequestQueue rq = Volley.newRequestQueue(getActivity());
+            RequestFuture<JSONObject> ft = RequestFuture.newFuture();
+            String url = "https://media.signbsl.com/videos/asl/startasl/mp4/" + al.get(k) + ".mp4";
+            StringRequest response1 = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
+                @Override
+                public void onResponse(String response) {
+                    try {
+                        //RecordVideos.failure = false;
+                        doeswork[index]=1;
+                        System.out.println("works meghana"+doeswork[index]/* +  failure*/);
+                        boolean filled = true;
+                        for (int j=0;j<al.size();j+=1){
+                            if (doeswork[j]==-1){
+                                filled = false;
+                                System.out.println(al.get(j));
+                            }
+                        }
+                        if(filled){
+                            System.out.println("START SLEEPING");
+                            makevideos();
+                        }
+                        else{
+                            System.out.println("no SLEEPING");
+                        }
+                        index+=1;
+                        System.out.println("index"+index);
+                    }
+                    catch (Exception e){
+                        doeswork[index]=0;
+                        System.out.println("errorrrrrrr");
+                        boolean filled = true;
+                        for (int j=0;j<al.size();j+=1){
+                            if (doeswork[j]==-1){
+                                filled = false;
+                            }
+                        }
+                        if(filled){
+                            System.out.println("START SLEEPING");
+                            makevideos();
+                        }
+
+                    }
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    System.out.println("err123"+error.toString());
+                    doeswork[index]=0;
+                    boolean filled = true;
+                    for (int j=0;j<al.size();j+=1){
+                        if (doeswork[j]==-1){
+                            filled = false;
+                        }
+                    }
+                    index+=1;
+                    System.out.println("not index"+index);
+                    if(filled){
+                        System.out.println("START SLEEPING");
+                        makevideos();
+                    }
+                    //System.out.println("does not work"+failure);
+                }
+            });
+
+//                if (!RecordVideos.failure) {
+            rq.add(response1);
+
+        }
+
+    }
+    public void makevideos(){
         for (int i = 0; i < al.size(); i++) {
             LinearLayout.LayoutParams lay = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
             lay.setMargins(100, 40, 100, 0);
-
+            index = i;
             TextView tv2 = new TextView(getActivity());
             tv2.setTextColor(Color.BLACK);
             tv2.setTextSize(30f);
@@ -146,74 +225,31 @@ public class RecordVideos extends Fragment {
             tvv.setTextSize(30f);
             tvv.setText(al.get(i) + "not found");
             try {
-
                 //  name.setText(umessage);
-                Uri video = Uri.parse("https://media.signbsl.com/videos/asl/startasl/mp4/" + al.get(i) + ".mp4");
-                RequestQueue rq = Volley.newRequestQueue(getActivity());
-                RequestFuture<JSONObject> ft = RequestFuture.newFuture();
-                String url = "https://media.signbsl.com/videos/asl/startasl/mp4/" + al.get(i) + ".mp4";
-                System.out.println(al.get(i)+"fjhkrjf");
-                int place = i;
-                StringRequest response1 = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        elems[place]=url;
-                        System.out.println("hey1!!");
-                        linlay.addView(tv2);
-                        cv2.addView(vidv);
-                        cv2.addView(tv);
-                        linlay.addView(cv2);
-                        MediaController mc = new MediaController(getActivity());
-                        mc.setAnchorView(vidv);
-                        vidv.setMediaController(mc);
-                        vidv.setVideoURI(video);
-                        if (video == null)
-                            System.out.println("nononono");
-                        vidv.start();
-                        vidv.pause();
-                    }
-                }, new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        System.out.println("ooosppspsps"+error.toString());
-                    }
-                });
-                rq.add(response1);
+                if( doeswork[i]==1) {
+                    Uri video = Uri.parse("https://media.signbsl.com/videos/asl/startasl/mp4/" + al.get(i) + ".mp4");
+                    System.out.println(al.get(i) + ": word");
+                    System.out.println("works"+al.get(i));
+                    linlay.addView(tv2);
+                    cv2.addView(vidv);
+                    cv2.addView(tv);
+                    linlay.addView(cv2);
+                    MediaController mc = new MediaController(getActivity());
+                    mc.setAnchorView(vidv);
+                    vidv.setMediaController(mc);
+                    vidv.setVideoURI(video);
+                    vidv.start();
+                    vidv.pause();
+                }
+                else{
+                    System.out.println("does not work sorry"+al.get(i)+doeswork[i]);
+                }
 
-                    /*StringRequest sr = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
-                        @Override
-                        public void onResponse(String response) {
-                            System.out.println("hey"+response.charAt(0));
-                            linlay.addView(tv2);
-                            cv2.addView(vidv);
-                            cv2.addView(tv);
-                            linlay.addView(cv2);
-                            MediaController mc = new MediaController(getActivity());
-                            mc.setAnchorView(vidv);
-                            vidv.setMediaController(mc);
-                            vidv.setVideoURI(video);
-                            if(video==null)
-                                System.out.println("nononono");
-                            vidv.start();
-                            vidv.pause();
-                            System.out.println("response");
-                        }
-                    }, new Response.ErrorListener() {
-                        @Override
-                        public void onErrorResponse(VolleyError error) {
-                           // Toast.makeText(getActivity(), "not found: "+m, Toast.LENGTH_SHORT).show();
+            } catch(Exception e){
+                // tv.setVisibility(View.VISIBLE);
+                System.out.println("yikes");
+            }
 
-                        }
-                    });*/
-
-            // Toast.makeText(getActivity(), "work"+al.get(i), Toast.LENGTH_LONG).show();
-        } catch(Exception e){
-            // tv.setVisibility(View.VISIBLE);
-            System.out.println("yikes");
         }
-
     }
-        for(String element:elems)
-            System.out.println("arr"+element);
-}
 }
